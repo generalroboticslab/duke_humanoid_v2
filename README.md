@@ -109,7 +109,7 @@ labels are modules: (I) camera, (II) gripper, (III) onboard computer. Dimensions
 | Cameras | 2 × Intel RealSense D436, 90°×65° RGB FoV, 0.1-3.0 m, each on its own yaw-pitch gimbal |
 | End effectors | parallel grippers, 350 g each, one mimic-coupled jaw slide |
 | Actuation | quasi-direct-drive throughout |
-| Control | 50 Hz learned whole-body policy onboard, 244 Hz CAN motor loop |
+| Control | 50 Hz learned whole-body policy onboard, 200 Hz CAN motor loop |
 
 MJCF, meshes, camera modules, and gripper are in
 [`simulation/asset/duke_v2/`](https://github.com/generalroboticslab/duke_humanoid_v2_simulation/tree/main/asset/duke_v2).
