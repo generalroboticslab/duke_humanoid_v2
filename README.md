@@ -13,21 +13,25 @@ is directed at a separate region.
 
 <!-- Add [Paper] / [Project page] / [Video] to the row above once the arXiv preprint is posted. -->
 
-![Duke Humanoid V2 tracking two moving targets](media/hardware_tracking.webp)
+![Tracking two moving targets on hardware](media/hardware_tracking.webp)
 
-Hardware: the robot tracks and reaches two moving targets held by two people on opposite
-sides, one camera module assigned to each.
+Two moving targets held by two people on opposite sides, one camera module tracking each.
+
+![Left/right close, four hardware trials](media/hardware_close_left_right.webp)
+
+Targets left and right, both within reach. The two cameras observe the separated targets
+and both arms reach without torso reorientation. Four trials playing together.
+
+![Front/back close, four hardware trials](media/hardware_close_front_back.webp)
+
+Targets in front and behind, the region a single forward-facing view cannot cover.
+
+![Left/right far, walking, four hardware trials](media/hardware_far_walk.webp)
+
+Targets too far to reach from the start stance: the robot observes both, walks closer, then
+grasps.
 
 ![Duke Humanoid V2](media/teaser.png)
-
-In simulation, the same two-target task under four camera configurations. Only Act₂ keeps
-both targets in view and reaches both. Shaded cones are the camera fields of view.
-
-![Two targets left and right, four camera setups](media/two_target_left_right.webp)
-
-The same four setups, with the tables in front and behind instead of left and right:
-
-![Two targets front and back, four camera setups](media/two_target_front_back.webp)
 
 ## Visible-reachable workspace
 
@@ -124,23 +128,18 @@ coverage; Act₂ had higher η₂ and could keep both targets in view for simult
 Camera configurations with higher visible-reachable and pairwise coverage reduced
 completion time and energy while maintaining similar success rates.
 
-**Real-world deployment.** Act₂ was deployed on all four tabletop scenarios. Each clip below
-is four separate trials playing together.
+![Two targets left and right, four camera configurations](media/two_target_left_right.webp)
 
-![Left/right close, four hardware trials](media/hardware_close_left_right.webp)
+The same scenario under all four configurations. Only Act₂ keeps both targets in view and
+reaches both. Shaded cones are the camera fields of view.
 
-Left/right close. The two cameras observe the separated targets and both arms reach without
-torso reorientation.
+![Two targets front and back, four camera configurations](media/two_target_front_back.webp)
 
-![Front/back close, four hardware trials](media/hardware_close_front_back.webp)
+The same four configurations with the benches in front and behind.
 
-Front/back close. One bench sits behind the robot, which is the region a single
-forward-facing view cannot cover.
-
-![Left/right far, walking, four hardware trials](media/hardware_far_walk.webp)
-
-Left/right far. Neither target is within reach from the start stance, so the robot observes
-both, walks closer, then grasps.
+**Real-world deployment.** Act₂ was deployed on all four tabletop scenarios, shown at the
+top of this page. The two cameras observed the separated front/back or left/right targets,
+while the far scenarios additionally required the robot to walk closer before grasping.
 
 Table IV has the full numbers, from 900 trials that reproduce from this release.
 
