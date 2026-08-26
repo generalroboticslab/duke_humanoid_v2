@@ -46,26 +46,24 @@ is.
 
 ## What the measure decided
 
-The sensing layout is an output of the analysis rather than an assumption going in.
+Where the cameras went, and how many, came out of the measure.
 
 **Top of the body, not the front or back faces.** A front- or back-mounted camera covers
-one side of the robot. Mounted on top, it reaches front, back, left, and right.
+one side of the robot. On top, it reaches front, back, left and right.
 
-**No wrist cameras.** On the reaching arm, a wrist camera contributes no independent gaze
-actuation under the partition above. Wrist cameras complement body cameras; they do not
-substitute for them.
+**No wrist cameras.** A wrist camera on the reaching arm adds no independent gaze
+actuation under the partition above. Wrist cameras complement body cameras rather than
+replace them.
 
-**Articulation, then count.** These fix two different problems, and conflating them is
-easy. Across every camera count, articulation is what drives single-target coverage: 38%
-to 97% on this robot. Once actuated, a single module is already near saturation, and a
-second or third adds under 3%.
+**Articulation for coverage.** At every camera count, articulation drives single-target
+coverage: 38% to 97% here. Once actuated, one module is nearly saturated, and a second or
+third adds under 3%.
 
-**Count is for two regions at once.** Single-target coverage says nothing about viewing
-two places simultaneously. With one camera, both regions have to fall inside the same
-unoccluded view, so pairwise coverage falls off as the targets separate. With two
-independently actuated cameras, each holds its own view and pairwise coverage stays nearly
-flat with separation: 0.45 to 0.95. A third reaches 0.97, for 0.58 kg, two more gimbal
-DoF, and about \$600. Hence two modules.
+**Count for two regions at once.** With one camera, both regions have to fall inside the
+same unoccluded view, so pairwise coverage falls off as the targets separate. Two
+independently actuated cameras each hold their own view, and coverage stays nearly flat:
+0.45 to 0.95. A third reaches 0.97, for 0.58 kg, two more gimbal DoF and about \$600.
+Hence two.
 
 ![Visible-reachable workspace across platforms](media/workspace.png)
 
@@ -78,32 +76,22 @@ scores lower for exactly this reason.
 
 ## What it buys
 
-Across six two-target scenarios, all five camera configurations succeed about equally
-often. The question is not whether the robot gets both cubes. It is what it spends getting
-them.
+Success rates barely move across the five configurations, all between 0.967 and 0.994. The
+cost does. Two actuated cameras finish 17% faster than the same robot with them welded,
+using 19% less mechanical energy.
 
-Freeing the cameras is what pays. The same robot with the same weights finishes about 17%
-faster and with 19% less mechanical work when its two cameras can aim than when they are
-welded. With one camera the gap is wider still, because a single welded camera can look
-nowhere except where the body already points.
+Most of that is search time. A welded camera has to rotate the torso, or walk toward the
+region until the cube appears. Actuated cameras look. That halves search time at two
+cameras and cuts it by 82% at one. Approach time drops too, since a far cube can be found
+before the robot starts walking, so it heads for the cube rather than the table.
 
-Almost all of that saving is walking that no longer happens. A fixed-camera robot finds a
-target the only way it can: rotate the body, or walk toward the region until the target
-comes into view. An actuated one turns its cameras and stays put, which is where most of
-the search time goes. Approach time drops for a related reason. A far target can be
-located before the walk begins, so the robot walks at the cube instead of walking at the
-table and correcting once it arrives.
+The second camera is a separate question. One actuated camera covers almost the same
+single-target space as two. Two matter when both cubes have to be watched at once, so the
+planner can reach for both together.
 
-The second camera does something different from actuation, and the two are easy to
-confuse. One actuated camera already sees nearly as much of the reachable space as two do.
-What the second one buys is holding both targets at the same time, so the planner reaches
-for them together instead of one after the other.
-
-On hardware, the robot ran all four tabletop scenarios, front/back and left/right, near
-and far, observing both targets without turning to look between them.
-
-Exact numbers are Table IV of the paper. The benchmark behind them is 6 scenarios × 3
-repeats × 10 seeded layouts, 900 trials, and it reproduces from this release.
+We ran the dual-actuated build on hardware for all four tabletop scenarios: front/back and
+left/right, close and far. Table IV has the full numbers, from 900 trials that reproduce
+from this release.
 
 ## Hardware
 
@@ -119,7 +107,7 @@ labels are modules: (I) camera, (II) gripper, (III) onboard computer. Dimensions
 | Mass / height | 36 kg / 1.2 m |
 | Arm reach / leg length | 0.46 m / 0.39 m |
 | Cameras | 2 × Intel RealSense D436, 90°×65° RGB FoV, 0.1-3.0 m, each on its own yaw-pitch gimbal |
-| End effectors | parallel grippers, 324 g each, one mimic-coupled jaw slide |
+| End effectors | parallel grippers, 350 g each, one mimic-coupled jaw slide |
 | Actuation | quasi-direct-drive throughout |
 | Control | 50 Hz learned whole-body policy onboard, 244 Hz CAN motor loop |
 
