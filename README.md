@@ -12,13 +12,17 @@ places at once without reorienting its torso.
 
 ![Duke Humanoid V2](media/teaser.png)
 
-![Two-target reach and grasp, four camera configurations](media/two_target_demo.gif)
+![Two targets left and right, four camera configurations](media/two_target_left_right.gif)
 
-The same mission run by four builds of the same robot, one green cube on the table and one
-carried by a person. Top row has one camera, bottom row has two; the left column has them
-welded, the right column has them on gimbals. Only the bottom right, two cameras and
-actuated, holds both cubes in view while both arms work. The cones are the fields of view,
-cyan for the left module and orange for the right.
+One green cube on each of two tables, and the same mission run by four builds of the same
+robot. Top row has one camera, bottom row has two. Left column has them welded to the
+body, right column has them on gimbals. Only the bottom right, two cameras and actuated,
+holds both cubes in view while both arms reach. The cones are the fields of view, cyan for
+the left module and orange for the right.
+
+Same four builds, with the tables in front and behind instead of left and right:
+
+![Two targets front and back](media/two_target_front_back.gif)
 
 ## Why the cameras move
 
