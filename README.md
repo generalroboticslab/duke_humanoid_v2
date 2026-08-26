@@ -18,8 +18,8 @@ visible-reachable workspace.**
 
 ![Tracking two moving targets on hardware](media/hardware_tracking.webp)
 
-<div align="center"><i>Two moving targets held by two people on opposite sides, one camera module
-tracking each.</i></div>
+<div align="center"><i>Two moving targets carried by two people on opposite sides. Each camera
+module tracks one target and the arm on that side follows it, both at once.</i></div>
 
 ## Highlights
 
