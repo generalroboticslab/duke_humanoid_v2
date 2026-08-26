@@ -1,8 +1,8 @@
 # Duke Humanoid V2
 
-A 31-DoF quasi-direct-drive humanoid with two RGB-D cameras that aim independently of
-each other and of torso heading, so it can watch two separated work regions while both
-arms reach into them.
+A 31-DoF quasi-direct-drive humanoid with two independently actuated yaw-pitch RGB-D
+cameras. Each camera aims at its own work region, so the robot can watch two separated
+places at once without reorienting its torso.
 
 [Simulation & training](https://github.com/generalroboticslab/duke_humanoid_v2_simulation) ·
 [Onboard control stack](https://github.com/generalroboticslab/duke_humanoid_v2_deploy) ·
@@ -14,22 +14,55 @@ arms reach into them.
 
 ## Why the cameras move
 
-Reachability alone does not tell you where a robot can *work*. A target can be
-kinematically reachable and still invisible to the cameras at the arm configurations
-that reach it, which forces the robot to reorient its body just to look. We measure this
-directly as the **visible-reachable workspace** (VRW) and design the sensing layout
-against it.
+Reachability tells you where the arm can put the end effector. It does not tell you
+whether the robot can see the target once it gets there. A target can sit well inside the
+arm workspace and still fall outside every camera view at the configurations that actually
+realize the reach. Humanoids inherit this from the human form factor: broad arm
+workspaces, vision concentrated in the head or the chest.
 
-On this robot, actuating the cameras raises visible-reachable coverage from 38% to 97% of
-the reachable volume, with no change to the arms or the body. A second independent camera
-raises pairwise coverage of two separated targets from 0.45 to 0.95. A third reaches only
-0.97 and costs 0.58 kg, two more gimbal DoF, and about \$600, so the robot carries two.
+The cost does not stay in the perception system. To acquire a view, the robot redirects a
+camera, rotates its torso, or walks to a new viewpoint. When the eyes cannot acquire the
+workspace, the body moves instead, so a limitation that looks perceptual at design time
+becomes whole-body motion at execution time.
 
-Across existing humanoids under the same geometric evaluation, visible-reachable coverage
-runs from 16% (fixed-head Unitree G1) to 48-76% for actuated-neck platforms: Talos, T1,
-GR-3, Apollo. None of them can aim two views independently.
+The **visible-reachable workspace** (VRW) measures that coupling. Start from the reachable
+workspace, then keep only the targets that can also be observed from a configuration that
+reaches them. How the joints are partitioned is the part that matters: joints spent
+realizing the reach do not count as gaze actuation. A wrist camera on the reaching arm is
+therefore not an independent view, while a gimbal that leaves the end-effector pose alone
+is.
+
+## What the measure decided
+
+The sensing layout is an output of the analysis rather than an assumption going in.
+
+**Top of the body, not the front or back faces.** A front- or back-mounted camera covers
+one side of the robot. Mounted on top, it reaches front, back, left, and right.
+
+**No wrist cameras.** On the reaching arm, a wrist camera contributes no independent gaze
+actuation under the partition above. Wrist cameras complement body cameras; they do not
+substitute for them.
+
+**Articulation, then count.** These fix two different problems, and conflating them is
+easy. Across every camera count, articulation is what drives single-target coverage: 38%
+to 97% on this robot. Once actuated, a single module is already near saturation, and a
+second or third adds under 3%.
+
+**Count is for two regions at once.** Single-target coverage says nothing about viewing
+two places simultaneously. With one camera, both regions have to fall inside the same
+unoccluded view, so pairwise coverage falls off as the targets separate. With two
+independently actuated cameras, each holds its own view and pairwise coverage stays nearly
+flat with separation: 0.45 to 0.95. A third reaches 0.97, for 0.58 kg, two more gimbal
+DoF, and about \$600. Hence two modules.
 
 ![Visible-reachable workspace across platforms](media/workspace.png)
+
+Evaluated the same way, other humanoids run from 16% visible-reachable coverage for the
+fixed-head Unitree G1 to 48-76% for the actuated-neck platforms: PAL Talos, Booster T1,
+Fourier GR-3, Apptronik Apollo. All of them fall below this design on pairwise coverage,
+because their cameras share the same neck joints. However wide or steerable that view is,
+it is still one viewing direction. GR-3 has the widest field of view in the group and
+scores lower for exactly this reason.
 
 ## Results
 
@@ -37,11 +70,12 @@ GR-3, Apollo. None of them can aim two views independently.
 | --- | --- |
 | Visible-reachable coverage, cameras fixed → actuated | 38% → **97%** |
 | Pairwise coverage η₂, one → two actuated cameras | 0.45 → **0.95** (three: 0.97) |
-| Two-target reach-and-grasp, vs. same robot cameras fixed | **−17%** completion time, **−19%** mechanical energy |
+| Two-target reach-and-grasp, vs. the same robot with cameras fixed | **−17%** completion time, **−19%** mechanical-energy proxy |
 | Hardware | front/back and left/right pairs grasped with no torso reorientation |
 
-The simulation benchmark is 6 scenarios × 3 repeats × 10 seeded layouts = 900 trials, and
-it reproduces from this release.
+The benchmark is 6 scenarios × 3 repeats × 10 seeded layouts, 900 trials, and it
+reproduces from this release. The time and energy saved is mostly viewpoint-seeking
+locomotion the robot no longer has to perform.
 
 ## Hardware
 
