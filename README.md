@@ -27,7 +27,7 @@ The same four setups, with the tables in front and behind instead of left and ri
 
 ![Two targets front and back, four camera setups](media/two_target_front_back.webp)
 
-## Why the cameras move
+## Visible-reachable workspace
 
 Reachability tells you where the arm can put the end effector. It does not tell you
 whether the robot can see the target once it gets there. A target can sit well inside the
@@ -47,7 +47,7 @@ realizing the reach do not count as gaze actuation. A wrist camera on the reachi
 therefore not an independent view, while a gimbal that leaves the end-effector pose alone
 is.
 
-## What the measure decided
+## Camera configuration
 
 Where the cameras went, and how many, came out of the measure.
 
@@ -77,7 +77,7 @@ because their cameras share the same neck joints. However wide or steerable that
 it is still one viewing direction. GR-3 has the widest field of view in the group and
 scores lower for exactly this reason.
 
-## What it buys
+## Two-target reach-and-grasp benchmark
 
 Success rates barely move across the five configurations, all between 0.967 and 0.994. The
 cost does. Two actuated cameras finish 17% faster than the same robot with them welded,
