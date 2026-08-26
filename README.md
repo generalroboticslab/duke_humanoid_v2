@@ -1,41 +1,102 @@
+<div align="center">
+
 # Duke Humanoid V2
 
-A 31-DoF quasi-direct-drive humanoid with two independently actuated yaw-pitch RGB-D
-cameras, designed against the **visible-reachable workspace** (VRW): a design-stage measure
-that conditions visibility on feasible reaching configurations, and extends it to
-concurrent visibility of spatially separated work regions. Because the two optical axes are
-not mechanically coupled, one camera can hold the current manipulation view while the other
-is directed at a separate region.
+**A 31-DoF humanoid whose two RGB-D cameras aim independently, designed against the
+visible-reachable workspace.**
 
-[Simulation & training](https://github.com/generalroboticslab/duke_humanoid_v2_simulation) ·
-[Onboard control stack](https://github.com/generalroboticslab/duke_humanoid_v2_deploy) ·
-[Hardware](#hardware) · [Quick start](#quick-start)
+**Paper** (preprint coming) ·
+**[Simulation &amp; training](https://github.com/generalroboticslab/duke_humanoid_v2_simulation)** ·
+**[Onboard control stack](https://github.com/generalroboticslab/duke_humanoid_v2_deploy)** ·
+**[Quick start](#quick-start)** ·
+**[Hardware](#hardware)**
 
-<!-- Add [Paper] / [Project page] / [Video] to the row above once the arXiv preprint is posted. -->
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+![Python](https://img.shields.io/badge/python-3.12-blue.svg)
+
+</div>
 
 ![Tracking two moving targets on hardware](media/hardware_tracking.webp)
 
-Two moving targets held by two people on opposite sides, one camera module tracking each.
+<div align="center"><i>Two moving targets held by two people on opposite sides, one camera module
+tracking each.</i></div>
 
-![Left/right close, four hardware trials](media/hardware_close_left_right.webp)
+## Highlights
 
-Targets left and right, both within reach. The two cameras observe the separated targets
-and both arms reach without torso reorientation. Four trials playing together.
+- **Articulation beats count.** Actuating the cameras raises visible-reachable coverage from 38%
+  to 97%. A second and third module then add under 3%.
+- **The second module buys concurrency.** Pairwise coverage η₂ rises from 0.45 to 0.95 and stays
+  nearly constant as the two work regions separate, which one camera cannot do.
+- **It shows up in the task.** Against a fixed two-camera layout, the actuated pair cuts mean
+  completion time by 17% and energy by 19%, with search time halved.
+- **It runs on hardware.** All four tabletop scenarios, plus dynamic tracking of two targets
+  carried by two people.
 
-![Front/back close, four hardware trials](media/hardware_close_front_back.webp)
+## Contents
 
-Targets in front and behind, the region a single forward-facing view cannot cover.
+- [Real-world deployment](#real-world-deployment)
+- [Quick start](#quick-start)
+- [Visible-reachable workspace](#visible-reachable-workspace)
+- [Camera configuration](#camera-configuration)
+- [Two-target reach-and-grasp benchmark](#two-target-reach-and-grasp-benchmark)
+- [Hardware](#hardware)
+- [The two repositories](#the-two-repositories)
+- [Running the hardware](#running-the-hardware)
+- [Citation](#citation)
 
-![Left/right far, walking, four hardware trials](media/hardware_far_walk.webp)
+## Real-world deployment
 
-Targets left and right, too far to reach from the start stance: the robot observes both,
-walks closer, then grasps.
+Four trials play together in each clip.
 
-![Front/back far, walking, four hardware trials](media/hardware_far_walk_front_back.webp)
-
-The same walk-then-grasp with the targets in front and behind.
+<table>
+<tr>
+<td width="50%"><img src="media/hardware_close_left_right.webp" width="100%" alt="Left/right close, four hardware trials"></td>
+<td width="50%"><img src="media/hardware_close_front_back.webp" width="100%" alt="Front/back close, four hardware trials"></td>
+</tr>
+<tr>
+<td><b>Left and right, within reach.</b> The two cameras observe the separated targets and both
+arms reach without torso reorientation.</td>
+<td><b>Front and behind.</b> The region a single forward-facing view cannot cover.</td>
+</tr>
+<tr>
+<td width="50%"><img src="media/hardware_far_walk.webp" width="100%" alt="Left/right far, walking, four hardware trials"></td>
+<td width="50%"><img src="media/hardware_far_walk_front_back.webp" width="100%" alt="Front/back far, walking, four hardware trials"></td>
+</tr>
+<tr>
+<td><b>Left and right, out of reach.</b> The robot observes both, walks closer, then grasps.</td>
+<td><b>Front and behind, out of reach.</b> The same walk-then-grasp with the targets separated
+along the other axis.</td>
+</tr>
+</table>
 
 ![Duke Humanoid V2](media/teaser.png)
+
+## Quick start
+
+```bash
+git clone --recurse-submodules git@github.com:generalroboticslab/duke_humanoid_v2.git
+cd duke_humanoid_v2/simulation
+pip install -r requirements.txt          # plus nvidia-curobo, see simulation/README.md
+```
+
+Regenerate the workspace figures. These read the shipped caches and finish in seconds,
+without a GPU sweep or any training:
+
+```bash
+MUJOCO_GL=egl python mj_envs/asset_zoo/reachability_study/plot_workspace_curobo.py --reach-visible-compare
+python mj_envs/asset_zoo/reachability_study/camera_count_ablation.py
+```
+
+Train the whole-body policy, or watch a shipped checkpoint:
+
+```bash
+python mj_envs/run.py train --task HumanoidRmaVelEstArmFlashSacv2ybsk_yaw_s4MixedArmsCam
+python mj_envs/run.py play  --task HumanoidRmaVelEstArmFlashSacv2ybsk_yaw_s4MixedArmsCam
+```
+
+Everything needs an NVIDIA GPU. Full reproduction instructions, including the 900-trial
+benchmark and the checkpoint provenance table, are in
+[`simulation/README.md`](https://github.com/generalroboticslab/duke_humanoid_v2_simulation#readme).
 
 ## Visible-reachable workspace
 
@@ -103,7 +164,7 @@ orientations that admit a collision-free IK solution at each 20 mm grid point.
 
 ![Visible-reachable volumes of six humanoid platforms](media/vrw_platforms.webp)
 
-The same volumes as solids, one orbit each, under the same geometric evaluation. Magenta to
+The same volumes as solids, one sweep each, every platform shown from its own front. Magenta to
 orange is visible-reachable, blue is reachable but blind.
 
 Under the same geometric evaluation, the visible-reachable fraction ranges from 16% for the
@@ -137,14 +198,36 @@ coverage; Act₂ had higher η₂ and could keep both targets in view for simult
 Camera configurations with higher visible-reachable and pairwise coverage reduced
 completion time and energy while maintaining similar success rates.
 
-![Two targets left and right, four camera configurations](media/two_target_left_right.webp)
+All six scenarios, each under all four camera configurations. Shaded cones are the camera fields
+of view.
 
-The same scenario under all four configurations. Only Act₂ keeps both targets in view and
-reaches both. Shaded cones are the camera fields of view.
-
-![Two targets front and back, four camera configurations](media/two_target_front_back.webp)
-
-The same four configurations with the benches in front and behind.
+<table>
+<tr>
+<td width="50%"><img src="media/two_target_left_right_close.webp" width="100%" alt="Two targets left and right, benches close"></td>
+<td width="50%"><img src="media/two_target_front_back_close.webp" width="100%" alt="Two targets front and back, benches close"></td>
+</tr>
+<tr>
+<td><b>Left/right, close.</b> Both targets within reach. Only the actuated pair keeps both in
+view and reaches both.</td>
+<td><b>Front/back, close.</b> The separation a single forward view cannot span.</td>
+</tr>
+<tr>
+<td width="50%"><img src="media/two_target_left_right_far.webp" width="100%" alt="Two targets left and right, benches far"></td>
+<td width="50%"><img src="media/two_target_front_back_far.webp" width="100%" alt="Two targets front and back, benches far"></td>
+</tr>
+<tr>
+<td><b>Left/right, far.</b> Benches at 0.8 m, so the robot walks before reaching.</td>
+<td><b>Front/back, far.</b> Locating a target before walking is what shortens the approach.</td>
+</tr>
+<tr>
+<td width="50%"><img src="media/two_target_handoff_left_right.webp" width="100%" alt="One target on a bench, one held by a human, left and right"></td>
+<td width="50%"><img src="media/two_target_handoff_front_back.webp" width="100%" alt="One target on a bench, one held by a human, front and back"></td>
+</tr>
+<tr>
+<td><b>Handoff, left/right.</b> One target on a bench, the other held by a human.</td>
+<td><b>Handoff, front/back.</b> The same mix with the two regions separated fore and aft.</td>
+</tr>
+</table>
 
 **Real-world deployment.** Act₂ was deployed on all four tabletop scenarios, shown at the
 top of this page. The two cameras observed the separated front/back or left/right targets,
@@ -173,33 +256,6 @@ labels are modules: (I) camera, (II) gripper, (III) onboard computer. Dimensions
 MJCF, meshes, camera modules, and gripper are in
 [`simulation/asset/duke_v2/`](https://github.com/generalroboticslab/duke_humanoid_v2_simulation/tree/main/asset/duke_v2).
 
-## Quick start
-
-```bash
-git clone --recurse-submodules git@github.com:generalroboticslab/duke_humanoid_v2.git
-cd duke_humanoid_v2/simulation
-pip install -r requirements.txt          # plus nvidia-curobo, see simulation/README.md
-```
-
-Regenerate the workspace figures. These read the shipped caches and finish in seconds,
-without a GPU sweep or any training:
-
-```bash
-MUJOCO_GL=egl python mj_envs/asset_zoo/reachability_study/plot_workspace_curobo.py --reach-visible-compare
-python mj_envs/asset_zoo/reachability_study/camera_count_ablation.py
-```
-
-Train the whole-body policy, or watch a shipped checkpoint:
-
-```bash
-python mj_envs/run.py train --task HumanoidRmaVelEstArmFlashSacv2ybsk_yaw_s4MixedArmsCam
-python mj_envs/run.py play  --task HumanoidRmaVelEstArmFlashSacv2ybsk_yaw_s4MixedArmsCam
-```
-
-Everything needs an NVIDIA GPU. Full reproduction instructions, including the 900-trial
-benchmark and the checkpoint provenance table, are in
-[`simulation/README.md`](https://github.com/generalroboticslab/duke_humanoid_v2_simulation#readme).
-
 ## The two repositories
 
 The split is between what runs in simulation and what runs on the robot. They are separate
@@ -223,6 +279,20 @@ first. That stack moves a 36 kg machine with people next to it, and its safety g
 incidents behind them.
 [`auto_operator_incidents.md`](https://github.com/generalroboticslab/duke_humanoid_v2_deploy/blob/main/control/docs/auto_operator_incidents.md)
 lists each failure alongside the "simplification" that would bring it back.
+
+## Citation
+
+The preprint is not posted yet. When it is, this block and the link row at the top will carry the
+reference.
+
+```bibtex
+@misc{duke_humanoid_v2,
+  title  = {Visible-Reachable Workspace for Perception-Aware Humanoid Design},
+  author = {General Robotics Lab, Duke University},
+  year   = {2026},
+  url    = {https://github.com/generalroboticslab/duke_humanoid_v2}
+}
+```
 
 ## License
 
