@@ -1,8 +1,8 @@
 # Duke Humanoid V2
 
-**A 31-DoF quasi-direct-drive humanoid whose two RGB-D cameras aim independently of each
-other and of torso heading — so it can watch two separated work regions while both arms
-reach into them.**
+A 31-DoF quasi-direct-drive humanoid with two RGB-D cameras that aim independently of
+each other and of torso heading, so it can watch two separated work regions while both
+arms reach into them.
 
 [Simulation & training](https://github.com/generalroboticslab/duke_humanoid_v2_simulation) ·
 [Onboard control stack](https://github.com/generalroboticslab/duke_humanoid_v2_deploy) ·
@@ -20,13 +20,13 @@ that reach it, which forces the robot to reorient its body just to look. We meas
 directly as the **visible-reachable workspace** (VRW) and design the sensing layout
 against it.
 
-On this robot, actuating the cameras moves visible-reachable coverage from **38% to 97%**
-of the reachable volume — the same arms, the same body, only the cameras freed. A second
-independent camera lifts pairwise coverage of two separated targets from **0.45 to 0.95**;
-a third only reaches 0.97, for +0.58 kg, two more gimbal DoF, and about \$600. So two.
+On this robot, actuating the cameras raises visible-reachable coverage from 38% to 97% of
+the reachable volume, with no change to the arms or the body. A second independent camera
+raises pairwise coverage of two separated targets from 0.45 to 0.95. A third reaches only
+0.97 and costs 0.58 kg, two more gimbal DoF, and about \$600, so the robot carries two.
 
 Across existing humanoids under the same geometric evaluation, visible-reachable coverage
-runs from 16% (fixed-head Unitree G1) to 48–76% for actuated-neck platforms — Talos, T1,
+runs from 16% (fixed-head Unitree G1) to 48-76% for actuated-neck platforms: Talos, T1,
 GR-3, Apollo. None of them can aim two views independently.
 
 ![Visible-reachable workspace across platforms](media/workspace.png)
@@ -47,8 +47,8 @@ it reproduces from this release.
 
 ![Duke Humanoid V2 hardware](media/hardware.png)
 
-Orange numbers are actuated joints: (1–7) shoulder pitch/roll/yaw, elbow, wrist roll/pitch/yaw,
-(8) waist, (9–14) hip pitch/roll/yaw, knee, ankle pitch/roll, (15–16) camera yaw/pitch. Green
+Orange numbers are actuated joints: (1-7) shoulder pitch/roll/yaw, elbow, wrist roll/pitch/yaw,
+(8) waist, (9-14) hip pitch/roll/yaw, knee, ankle pitch/roll, (15-16) camera yaw/pitch. Green
 labels are modules: (I) camera, (II) gripper, (III) onboard computer. Dimensions in mm.
 
 | | |
@@ -56,7 +56,7 @@ labels are modules: (I) camera, (II) gripper, (III) onboard computer. Dimensions
 | DoF | 31: 27-DoF body (waist ×1, legs 2×6, arms 2×7) + two 2-DoF camera gimbals, +1 per gripper |
 | Mass / height | 36 kg / 1.2 m |
 | Arm reach / leg length | 0.46 m / 0.39 m |
-| Cameras | 2 × Intel RealSense D436, 90°×65° RGB FoV, 0.1–3.0 m, each on its own yaw-pitch gimbal |
+| Cameras | 2 × Intel RealSense D436, 90°×65° RGB FoV, 0.1-3.0 m, each on its own yaw-pitch gimbal |
 | End effectors | parallel grippers, 324 g each, one mimic-coupled jaw slide |
 | Actuation | quasi-direct-drive throughout |
 | Control | 50 Hz learned whole-body policy onboard, 244 Hz CAN motor loop |
@@ -72,8 +72,8 @@ cd duke_humanoid_v2/simulation
 pip install -r requirements.txt          # plus nvidia-curobo, see simulation/README.md
 ```
 
-Regenerate the workspace figures — seconds, from shipped caches, no GPU sweep and no
-training:
+Regenerate the workspace figures. These read the shipped caches and finish in seconds,
+without a GPU sweep or any training:
 
 ```bash
 MUJOCO_GL=egl python mj_envs/asset_zoo/reachability_study/plot_workspace_curobo.py --reach-visible-compare
@@ -93,9 +93,8 @@ benchmark and the checkpoint provenance table, are in
 
 ## The two repositories
 
-Split along the line that matters in practice: what runs in simulation, and what runs on
-the robot. They are separate repositories, not directories, so each keeps its own history
-and issue tracker. Training exports a policy; `deploy/` runs the export.
+The split is between what runs in simulation and what runs on the robot. They are separate
+repositories, not directories, so each keeps its own history and issue tracker. Training exports a policy; `deploy/` runs the export.
 
 | | what it is |
 | --- | --- |
@@ -112,7 +111,7 @@ git submodule update --init --recursive
 
 Read [`deploy/control/docs/OPERATIONS.md`](https://github.com/generalroboticslab/duke_humanoid_v2_deploy/blob/main/control/docs/OPERATIONS.md)
 first. That stack moves a 36 kg machine with people next to it, and its safety gates have
-incidents behind them —
+incidents behind them.
 [`auto_operator_incidents.md`](https://github.com/generalroboticslab/duke_humanoid_v2_deploy/blob/main/control/docs/auto_operator_incidents.md)
 lists each failure alongside the "simplification" that would bring it back.
 
