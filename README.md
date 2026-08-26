@@ -76,18 +76,34 @@ because their cameras share the same neck joints. However wide or steerable that
 it is still one viewing direction. GR-3 has the widest field of view in the group and
 scores lower for exactly this reason.
 
-## Results
+## What it buys
 
-| | |
-| --- | --- |
-| Visible-reachable coverage, cameras fixed → actuated | 38% → **97%** |
-| Pairwise coverage η₂, one → two actuated cameras | 0.45 → **0.95** (three: 0.97) |
-| Two-target reach-and-grasp, vs. the same robot with cameras fixed | **−17%** completion time, **−19%** mechanical-energy proxy |
-| Hardware | front/back and left/right pairs grasped with no torso reorientation |
+Across six two-target scenarios, all five camera configurations succeed about equally
+often. The question is not whether the robot gets both cubes. It is what it spends getting
+them.
 
-The benchmark is 6 scenarios × 3 repeats × 10 seeded layouts, 900 trials, and it
-reproduces from this release. The time and energy saved is mostly viewpoint-seeking
-locomotion the robot no longer has to perform.
+Freeing the cameras is what pays. The same robot with the same weights finishes about 17%
+faster and with 19% less mechanical work when its two cameras can aim than when they are
+welded. With one camera the gap is wider still, because a single welded camera can look
+nowhere except where the body already points.
+
+Almost all of that saving is walking that no longer happens. A fixed-camera robot finds a
+target the only way it can: rotate the body, or walk toward the region until the target
+comes into view. An actuated one turns its cameras and stays put, which is where most of
+the search time goes. Approach time drops for a related reason. A far target can be
+located before the walk begins, so the robot walks at the cube instead of walking at the
+table and correcting once it arrives.
+
+The second camera does something different from actuation, and the two are easy to
+confuse. One actuated camera already sees nearly as much of the reachable space as two do.
+What the second one buys is holding both targets at the same time, so the planner reaches
+for them together instead of one after the other.
+
+On hardware, the robot ran all four tabletop scenarios, front/back and left/right, near
+and far, observing both targets without turning to look between them.
+
+Exact numbers are Table IV of the paper. The benchmark behind them is 6 scenarios × 3
+repeats × 10 seeded layouts, 900 trials, and it reproduces from this release.
 
 ## Hardware
 
