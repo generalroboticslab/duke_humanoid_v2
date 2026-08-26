@@ -2,7 +2,7 @@
 
 # Duke Humanoid V2
 
-**A 31-DoF humanoid whose two RGB-D cameras aim independently, designed against the
+**A 31-DoF humanoid whose two RGB-D cameras aim independently, designed around the
 visible-reachable workspace.**
 
 **Paper** (preprint coming) ·
@@ -21,6 +21,11 @@ visible-reachable workspace.**
 <div align="center"><i>Two moving targets carried by two people on opposite sides. Each camera
 module tracks one target and the arm on that side follows it, both at once.</i></div>
 
+A humanoid can usually reach far more space than it can see. The **visible-reachable
+workspace** (VRW) measures the part it can do both at once, and treats that overlap as a
+design variable rather than an afterthought. Applying it to this robot's sensing layout is
+what produced two independently aimed camera modules instead of a fixed head.
+
 ## Highlights
 
 - **Articulation beats count.** Actuating the cameras raises visible-reachable coverage from 38%
@@ -28,9 +33,11 @@ module tracks one target and the arm on that side follows it, both at once.</i><
 - **The second module buys concurrency.** Pairwise coverage η₂ rises from 0.45 to 0.95 and stays
   nearly constant as the two work regions separate, which one camera cannot do.
 - **It shows up in the task.** Against a fixed two-camera layout, the actuated pair cuts mean
-  completion time by 17% and energy by 19%, with search time halved.
+  completion time by 17% and energy by 19%, with search time halved and success unchanged.
 - **It runs on hardware.** All four tabletop scenarios, plus dynamic tracking of two targets
   carried by two people.
+- **It reproduces.** Every workspace figure regenerates from shipped caches in seconds, with no
+  GPU sweep and no training.
 
 ## Contents
 
@@ -70,6 +77,9 @@ along the other axis.</td>
 </table>
 
 ![Duke Humanoid V2](media/teaser.png)
+
+The same robot in simulation and on hardware. Act₂, the adopted configuration, was deployed on
+all four tabletop scenarios above; the far ones required walking closer before grasping.
 
 ## Quick start
 
@@ -167,12 +177,28 @@ orientations that admit a collision-free IK solution at each 20 mm grid point.
 The same volumes as solids, one sweep each, every platform shown from its own front. Magenta to
 orange is visible-reachable, blue is reachable but blind.
 
+| Platform | Camera modules | Independently aimable | Visible-reachable | Scalar η₂ |
+| --- | ---: | ---: | ---: | ---: |
+| **Ours, actuated** | 2 | **2** | **97%** | **0.96** |
+| Apptronik Apollo | 2 | 1 | 76% | 0.25 |
+| Fourier GR-3 | 1 | 1 | 70% | 0.24 |
+| Booster T1 | 1 | 1 | 67% | 0.20 |
+| PAL Talos | 1 | 1 | 48% | 0.09 |
+| Unitree G1 | 1 | 0 | 16% | 0.03 |
+| *Ours, cameras welded* | *2* | *0* | *38%* | *0.14* |
+
+The last row is the same robot with its camera joints frozen, which is the controlled
+comparison: the body and the arms are identical and coverage still falls from 97% to 38%.
+
 Under the same geometric evaluation, the visible-reachable fraction ranges from 16% for the
-fixed-head Unitree G1 to 48-76% for platforms with an actuated neck: PAL Talos, Booster T1,
-Fourier GR-3 and Apptronik Apollo. All remain below this design on η₂, because their
-cameras share the same neck joints and cannot aim independently at two separated regions.
-GR-3 has the widest camera field of view among these platforms but still provides only one
-viewing direction.
+fixed-head Unitree G1 to 48-76% for platforms with an actuated neck. All remain below this
+design on η₂, because their cameras share the same neck joints and cannot aim independently
+at two separated regions. GR-3 has the widest camera field of view among these platforms but
+still provides only one viewing direction.
+
+η₂ is distribution-dependent and is descriptive context across platforms, not a universal
+ranking; the controlled comparison is the camera-count study above, which evaluates every
+layout on one robot and one grid.
 
 ## Two-target reach-and-grasp benchmark
 
@@ -183,23 +209,38 @@ a bench and the other held by a human. Benches were close (0.20 m, objects withi
 far (0.8 m, requiring the robot to walk before reaching). A trial succeeded if both targets
 were grasped. Completion time decomposes into search, approach and manipulation.
 
-Success rates were similar across the five configurations, ranging from 0.967 to 0.994.
-Compared with Fix₂, Act₂ reduced mean completion time by 17% and energy by 19%. At K = 1,
-Act₁ reduced completion time by 24% and energy by 35% relative to Fix₁.
+Averaged over the six scenarios, 900 trials, success-conditional means. Lower is better
+throughout. Act₂ is the adopted configuration.
 
-Camera actuation reduced search, approach and manipulation time alike. Act₂ reduced search
-time by 50% relative to Fix₂, and Act₁ by 82% relative to Fix₁. The reduction came mainly
-from locating targets through camera motion rather than walking until the targets became
-visible. Approach time also fell, because far targets could be located before walking,
-allowing the robot to walk directly toward the target rather than first toward the bench.
+| | Time T̄ (s) | Search (s) | Approach (s) | Manipulation (s) | Energy (J) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Unitree G1 | 27.5 | 3.8 | 3.8 | 19.9 | 494 |
+| Fix₂ | 17.0 | 0.2 | 3.2 | 13.6 | 425 |
+| **Act₂ (ours)** | **14.1** | **0.1** | **2.1** | **11.9** | **346** |
+| Fix₁ | 20.5 | 3.3 | 3.3 | 13.9 | 595 |
+| Act₁ | 15.5 | 0.6 | 2.7 | 12.2 | 385 |
+
+Act₂ is best on every metric in the mean. Success rate does not separate the five
+configurations (0.967 to 0.994), so time and energy carry the comparison. Against Fix₂, Act₂
+cut completion time 17% and energy 19%; at K = 1, Act₁ cut them 24% and 35% relative to Fix₁.
+
+Camera actuation reduced search, approach and manipulation time alike. The search column is
+where it shows most: Act₂ reduced search time by 50% relative to Fix₂, and Act₁ by 82%
+relative to Fix₁, mainly by locating targets through camera motion rather than walking until
+the targets became visible. Approach time also fell, because far targets could be located
+before walking, allowing the robot to walk directly toward the target rather than first
+toward the bench.
 
 The second camera contributed differently. Act₁ and Act₂ had similar single-target
 coverage; Act₂ had higher η₂ and could keep both targets in view for simultaneous reaching.
 Camera configurations with higher visible-reachable and pairwise coverage reduced
 completion time and energy while maintaining similar success rates.
 
-All six scenarios, each under all four camera configurations. Shaded cones are the camera fields
-of view.
+The per-scenario breakdown is Table IV in the paper, and the whole sweep reproduces from
+[`dyn_sweep.py`](https://github.com/generalroboticslab/duke_humanoid_v2_simulation#two-target-reach-and-grasp-benchmark-table-iv).
+
+All six scenarios below, each under all four camera configurations. Shaded cones are the camera
+fields of view.
 
 <table>
 <tr>
@@ -228,12 +269,6 @@ view and reaches both.</td>
 <td><b>Handoff, front/back.</b> The same mix with the two regions separated fore and aft.</td>
 </tr>
 </table>
-
-**Real-world deployment.** Act₂ was deployed on all four tabletop scenarios, shown at the
-top of this page. The two cameras observed the separated front/back or left/right targets,
-while the far scenarios additionally required the robot to walk closer before grasping.
-
-Table IV has the full numbers, from 900 trials that reproduce from this release.
 
 ## Hardware
 
