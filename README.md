@@ -92,9 +92,26 @@ The second camera is a separate question. One actuated camera covers almost the 
 single-target space as two. Two matter when both cubes have to be watched at once, so the
 planner can reach for both together.
 
-We ran the dual-actuated build on hardware for all four tabletop scenarios: front/back and
-left/right, close and far. Table IV has the full numbers, from 900 trials that reproduce
-from this release.
+We ran the dual-actuated build on hardware for all four tabletop scenarios. Each clip below
+is four separate trials playing together.
+
+![Left and right tables, close, four hardware trials](media/hardware_close_left_right.webp)
+
+Tables to the left and right, both within reach. One camera goes to each cube and both arms
+go out together, with the feet staying where they are.
+
+![Front and back tables, close, four hardware trials](media/hardware_close_front_back.webp)
+
+The same, with one table in front and the other behind. The rear cube is the case a
+forward-facing camera cannot cover at all.
+
+![Far tables, walking, four hardware trials](media/hardware_far_walk.webp)
+
+Far apart, so neither cube is reachable from a standstill. The robot locates both first,
+then walks to each in turn. Finding them before setting off is what lets it walk at a cube
+rather than at a table.
+
+Table IV has the full numbers, from 900 trials that reproduce from this release.
 
 ## Hardware
 
