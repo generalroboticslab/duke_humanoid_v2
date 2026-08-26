@@ -1,0 +1,21 @@
+#!/bin/sh
+# Block a push whose recorded submodule pointers do not match the submodule checkouts.
+#
+# The failure this catches: commit in simulation/ or deploy/, push it, then commit and push
+# the parent without `git add`ing the moved gitlink. The parent then keeps pointing at the
+# previous commit, so `git clone --recurse-submodules` hands a visitor the old README while
+# the submodule repo shows the new one. Nothing errors; the release is just quietly stale.
+#
+# A pre-push hook cannot fix this for you. The refs being pushed are already chosen by the
+# time it runs, so a bump commit created here would not be included in the push. Abort and
+# name the command instead.
+stale=$(git submodule --quiet foreach 'git rev-parse HEAD | grep -qx "$sha1" || echo "$sm_path"')
+if [ -n "$stale" ]; then
+    echo "pre-push: submodule pointer(s) behind their checkout:" >&2
+    for p in $stale; do
+        echo "  $p  recorded $(git rev-parse --short "HEAD:$p")  actual $(git -C "$p" rev-parse --short HEAD)" >&2
+    done
+    echo >&2
+    echo "  git add $stale && git commit -m 'Bump submodule pointers'" >&2
+    exit 1
+fi
