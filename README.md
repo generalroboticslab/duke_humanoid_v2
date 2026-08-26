@@ -28,8 +28,12 @@ Targets in front and behind, the region a single forward-facing view cannot cove
 
 ![Left/right far, walking, four hardware trials](media/hardware_far_walk.webp)
 
-Targets too far to reach from the start stance: the robot observes both, walks closer, then
-grasps.
+Targets left and right, too far to reach from the start stance: the robot observes both,
+walks closer, then grasps.
+
+![Front/back far, walking, four hardware trials](media/hardware_far_walk_front_back.webp)
+
+The same walk-then-grasp with the targets in front and behind.
 
 ![Duke Humanoid V2](media/teaser.png)
 
@@ -96,6 +100,11 @@ modules.
 
 Colour encodes the orientation reachability index R, the fraction of 64 near-uniform SO(3)
 orientations that admit a collision-free IK solution at each 20 mm grid point.
+
+![Visible-reachable volumes of six humanoid platforms](media/vrw_platforms.webp)
+
+The same volumes as solids, one orbit each, under the same geometric evaluation. Magenta to
+orange is visible-reachable, blue is reachable but blind.
 
 Under the same geometric evaluation, the visible-reachable fraction ranges from 16% for the
 fixed-head Unitree G1 to 48-76% for platforms with an actuated neck: PAL Talos, Booster T1,
