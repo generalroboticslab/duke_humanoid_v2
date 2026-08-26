@@ -353,7 +353,7 @@ reference.
 ```bibtex
 @misc{duke_humanoid_v2,
   title  = {Visible-Reachable Workspace for Perception-Aware Humanoid Design},
-  author = {General Robotics Lab, Duke University},
+  author = {Boxi Xia and Zijiang Yang and Ryan Shin and Bokuan Li and Eric Lu and Jacob Lee and Jiaxun Liu and Boyuan Chen},
   year   = {2026},
   url    = {https://github.com/generalroboticslab/duke_humanoid_v2}
 }
