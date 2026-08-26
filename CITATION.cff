@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: If you use this robot, its workspace study, or the two-target benchmark, please cite the work below.
+title: "Duke Humanoid V2: a 31-DoF bipedal platform with two independently actuated camera gimbals, designed around the visible-reachable workspace"
+type: software
+date-released: 2026-08-26
+authors:
+  - family-names: Xia
+    given-names: Boxi
+  - family-names: Yang
+    given-names: Zijiang
+  - family-names: Shin
+    given-names: Ryan
+  - family-names: Li
+    given-names: Bokuan
+  - family-names: Lu
+    given-names: Eric
+  - family-names: Lee
+    given-names: Jacob
+  - family-names: Liu
+    given-names: Jiaxun
+  - family-names: Chen
+    given-names: Boyuan
+keywords:
+  - humanoid robotics
+  - manipulation
+  - workspace analysis
+  - reinforcement learning
+  - perception
+license: Apache-2.0
+url: https://github.com/generalroboticslab/duke_humanoid_v2
+repository-code: https://github.com/generalroboticslab/duke_humanoid_v2
