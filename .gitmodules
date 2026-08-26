@@ -1,6 +1,8 @@
 [submodule "deploy"]
 	path = deploy
 	url = git@github.com:generalroboticslab/duke_humanoid_v2_deploy.git
+	branch = main
 [submodule "simulation"]
 	path = simulation
 	url = git@github.com:generalroboticslab/duke_humanoid_v2_simulation.git
+	branch = main
