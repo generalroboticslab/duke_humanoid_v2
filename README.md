@@ -83,10 +83,14 @@ all four tabletop scenarios above; the far ones required walking closer before g
 
 ## Quick start
 
+Everything in this section lives in the simulation repository, so clone that one alone.
+The full project with both submodules is close to a gigabyte, most of it robot meshes and
+recorded video:
+
 ```bash
-git clone --recurse-submodules git@github.com:generalroboticslab/duke_humanoid_v2.git
-cd duke_humanoid_v2/simulation
-pip install -r requirements.txt          # plus nvidia-curobo, see simulation/README.md
+git clone https://github.com/generalroboticslab/duke_humanoid_v2_simulation.git
+cd duke_humanoid_v2_simulation
+pip install -r requirements.txt          # plus nvidia-curobo, see its README
 ```
 
 Regenerate the workspace figures. These read the shipped caches and finish in seconds,
@@ -107,6 +111,26 @@ python mj_envs/run.py play  --task HumanoidRmaVelEstArmFlashSacv2ybsk_yaw_s4Mixe
 Everything needs an NVIDIA GPU. Full reproduction instructions, including the 900-trial
 benchmark and the checkpoint provenance table, are in
 [`simulation/README.md`](https://github.com/generalroboticslab/duke_humanoid_v2_simulation#readme).
+
+### Where each paper artifact lives
+
+| Artifact | Repository | Cost to regenerate |
+| --- | --- | --- |
+| Fig. 2 cross-platform VRW, Fig. 5 camera count | `simulation` | seconds, shipped caches |
+| Fig. 6 task keyframe grid | `simulation` | seconds, shipped frames |
+| Table IV, 900-trial benchmark | `simulation` | hours, multi-GPU |
+| Policy checkpoints, with md5 and training command per weight | `simulation` | shipped |
+| Robot MJCF, meshes, camera modules, gripper | `simulation` | shipped |
+| The 50 Hz onboard stack behind the hardware clips | `deploy` | not reproducible offline, needs the robot |
+
+Only the benchmark needs a sweep. Every figure in the paper that this release covers
+regenerates from data already in the repository.
+
+To clone the whole project including the onboard stack:
+
+```bash
+git clone --recurse-submodules https://github.com/generalroboticslab/duke_humanoid_v2.git
+```
 
 ## Visible-reachable workspace
 
@@ -329,7 +353,30 @@ reference.
 }
 ```
 
+## Acknowledgements
+
+The comparison platforms in the VRW study are third-party models, redistributed under their
+own licenses in `simulation/asset/<platform>/`. Each keeps its upstream `LICENSE` beside its
+meshes.
+
+| Platform | Source | License |
+| --- | --- | --- |
+| Unitree G1 | [mjlab](https://github.com/mujocolab/mjlab), which carries the [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie) model | see mjlab; only cuRobo URDF exports are vendored here |
+| Booster T1 | MuJoCo Menagerie | Apache-2.0 |
+| Apptronik Apollo | MuJoCo Menagerie | Apache-2.0 |
+| PAL Talos | MuJoCo Menagerie | Apache-2.0 |
+| Fourier GR-3 | [Fourier GRx](https://github.com/FFTAI) | **GPL-3.0** |
+| ToddlerBot | upstream ToddlerBot release | MIT |
+
+**The Fourier GR-3 model is GPL-3.0**, not Apache-2.0 like the rest of this release. If that
+matters for your use, drop `simulation/asset/fourier_gr3/`; it is a comparison column in the
+workspace figures and nothing else depends on it.
+
+The study and the benchmark are built on [MuJoCo](https://github.com/google-deepmind/mujoco),
+[mjlab](https://github.com/mujocolab/mjlab), MuJoCo Warp, and
+[cuRobo](https://github.com/NVlabs/curobo) for collision-free IK and motion planning.
+
 ## License
 
-Apache-2.0, both repositories. Third-party robot models keep their upstream licenses
-alongside their assets.
+Apache-2.0 for the code in all three repositories, see [`LICENSE`](LICENSE). Third-party
+robot models keep their upstream licenses alongside their assets, listed above.
