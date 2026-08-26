@@ -54,6 +54,13 @@ the end-effector pose does contribute independent sensing actuation.
 A pairwise extension, η₂, asks whether a layout can maintain concurrent views of a
 manipulation target and a second spatially separated region.
 
+![Visible-reachable workspace, fixed versus actuated cameras](media/vrw_fixed_vs_actuated.webp)
+
+The same arms and the same body, differing only in whether the camera joints are free.
+Magenta is visible-reachable, blue is reachable but blind, and shade encodes the
+orientation reachability index R. The blue volume is the cost the measure exists to expose:
+space the arm can reach and the cameras cannot see.
+
 ## Camera configuration
 
 We applied VRW to the sensing layout of the robot itself, evaluating six layouts: K = 1, 2
