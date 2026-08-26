@@ -12,21 +12,15 @@ places at once without reorienting its torso.
 
 ![Duke Humanoid V2](media/teaser.png)
 
-![Two targets left and right, four camera configurations](media/two_target_left_right.gif)
+![Two targets left and right, four camera setups](media/two_target_left_right.webp)
 
-Two tables, one green cube on each. The same robot with four camera setups:
-
-| | fixed | actuated |
-| --- | --- | --- |
-| **single camera** | top left | top right |
-| **dual camera** | bottom left | bottom right |
-
-Only dual actuated, bottom right, keeps both cubes in view and reaches both. The shaded
-cones show what each camera sees.
+Two tables, one green cube on each, and the same robot with four camera setups. Only dual
+actuated keeps both cubes in view and reaches both. The shaded cones show what each camera
+sees.
 
 The same four setups, with the tables in front and behind instead of left and right:
 
-![Two targets front and back](media/two_target_front_back.gif)
+![Two targets front and back, four camera setups](media/two_target_front_back.webp)
 
 ## Why the cameras move
 
