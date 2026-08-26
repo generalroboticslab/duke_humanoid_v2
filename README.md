@@ -1,8 +1,11 @@
 # Duke Humanoid V2
 
 A 31-DoF quasi-direct-drive humanoid with two independently actuated yaw-pitch RGB-D
-cameras. Each camera aims at its own work region, so the robot can watch two separated
-places at once without reorienting its torso.
+cameras, designed against the **visible-reachable workspace** (VRW): a design-stage measure
+that conditions visibility on feasible reaching configurations, and extends it to
+concurrent visibility of spatially separated work regions. Because the two optical axes are
+not mechanically coupled, one camera can hold the current manipulation view while the other
+is directed at a separate region.
 
 [Simulation & training](https://github.com/generalroboticslab/duke_humanoid_v2_simulation) ·
 [Onboard control stack](https://github.com/generalroboticslab/duke_humanoid_v2_deploy) ·
@@ -12,14 +15,13 @@ places at once without reorienting its torso.
 
 ![Duke Humanoid V2 tracking two moving targets](media/hardware_tracking.webp)
 
-On hardware. Two people stand on opposite sides, each holding a tagged cube and moving it.
-One camera goes to each, and both arms track their own target.
+Hardware: the robot tracks and reaches two moving targets held by two people on opposite
+sides, one camera module assigned to each.
 
 ![Duke Humanoid V2](media/teaser.png)
 
-In simulation, the same task with four camera setups: two tables, one green cube on each.
-Only dual actuated keeps both cubes in view and reaches both. The shaded cones show what
-each camera sees.
+In simulation, the same two-target task under four camera configurations. Only Act₂ keeps
+both targets in view and reaches both. Shaded cones are the camera fields of view.
 
 ![Two targets left and right, four camera setups](media/two_target_left_right.webp)
 
@@ -29,87 +31,109 @@ The same four setups, with the tables in front and behind instead of left and ri
 
 ## Visible-reachable workspace
 
-Reachability tells you where the arm can put the end effector. It does not tell you
-whether the robot can see the target once it gets there. A target can sit well inside the
-arm workspace and still fall outside every camera view at the configurations that actually
-realize the reach. Humanoids inherit this from the human form factor: broad arm
-workspaces, vision concentrated in the head or the chest.
+Workspace analysis measures where a robot can place its end effector. For visually guided
+manipulation, reachability alone is insufficient: a target may be kinematically reachable
+yet unavailable to the robot's cameras at the configurations that realize that reach. The
+robot must then redirect its sensing or move its body to acquire a view, turning a
+perception limitation into additional motion. Existing humanoids largely inherit this
+limitation when copying human form factors, pairing broad arm workspaces with vision
+concentrated in the head or the chest.
 
-The cost does not stay in the perception system. To acquire a view, the robot redirects a
-camera, rotates its torso, or walks to a new viewpoint. When the eyes cannot acquire the
-workspace, the body moves instead, so a limitation that looks perceptual at design time
-becomes whole-body motion at execution time.
+The **visible-reachable workspace** (VRW) is a design-stage measure that conditions
+visibility on feasible reaching configurations. It starts from the conventional reachable
+workspace and retains only targets that can also be observed from a feasible reaching
+configuration.
 
-The **visible-reachable workspace** (VRW) measures that coupling. Start from the reachable
-workspace, then keep only the targets that can also be observed from a configuration that
-reaches them. How the joints are partitioned is the part that matters: joints spent
-realizing the reach do not count as gaze actuation. A wrist camera on the reaching arm is
-therefore not an independent view, while a gimbal that leaves the end-effector pose alone
-is.
+The definition is task-dependent: joints required to realize the active manipulation are
+distinguished from joints that remain independently available to aim cameras. A
+wrist-mounted camera could be included in the visibility model, but on the reaching arm its
+pose is coupled to the arm configuration used for the current reach, so it is not treated
+as an independently steerable gaze degree of freedom. A camera gimbal that does not affect
+the end-effector pose does contribute independent sensing actuation.
+
+A pairwise extension, η₂, asks whether a layout can maintain concurrent views of a
+manipulation target and a second spatially separated region.
 
 ## Camera configuration
 
-Where the cameras went, and how many, came out of the measure.
+We applied VRW to the sensing layout of the robot itself, evaluating six layouts: K = 1, 2
+and 3 camera modules, each either actuated (Act) or fixed (Fix). Both single-target VRW
+coverage and pairwise coverage η₂ were compared, with all other robot configuration held
+the same.
 
-**Top of the body, not the front or back faces.** A front- or back-mounted camera covers
-one side of the robot. On top, it reaches front, back, left and right.
+**Mounting.** Cameras could be mounted on the front, back or top faces of the body. Front
+and back were not chosen because their visual coverage is limited to one side of the
+humanoid, whereas top-mounted cameras cover the front, back, left and right sides. Wrist
+cameras were not considered: a wrist camera on the reaching arm offers no independent gaze
+actuation under the partition above, and being end-effector mounted they complement body
+cameras rather than substitute for them.
 
-**No wrist cameras.** A wrist camera on the reaching arm adds no independent gaze
-actuation under the partition above. Wrist cameras complement body cameras rather than
-replace them.
+**Articulation over count.** Camera articulation had a larger effect on VRW coverage than
+camera count. Across all camera counts, actuating the cameras greatly increased coverage,
+from 38% to 97% on this robot. Once actuated, coverage was already close to saturation
+with one camera module, and adding a second or third showed under 3% gains.
 
-**Articulation for coverage.** At every camera count, articulation drives single-target
-coverage: 38% to 97% here. Once actuated, one module is nearly saturated, and a second or
-third adds under 3%.
-
-**Count for two regions at once.** With one camera, both regions have to fall inside the
-same unoccluded view, so pairwise coverage falls off as the targets separate. Two
-independently actuated cameras each hold their own view, and coverage stays nearly flat:
-0.45 to 0.95. A third reaches 0.97, for 0.58 kg, two more gimbal DoF and about \$600.
-Hence two.
+**Count for concurrency.** VRW coverage considers one manipulation target at a time. With
+one camera, both regions must lie within the same unoccluded camera view, so η₂ decreased
+as target separation increased. With two independently actuated cameras, each could
+maintain a separate view and η₂ remained nearly constant with separation, rising from 0.45
+to 0.95. A third camera raised it only to 0.97 while adding 0.58 kg, two gimbal DoF and
+approximately \$600 in hardware cost. The design adopted K = 2 independently actuated
+modules.
 
 ![Visible-reachable workspace across platforms](media/workspace.png)
 
-Evaluated the same way, other humanoids run from 16% visible-reachable coverage for the
-fixed-head Unitree G1 to 48-76% for the actuated-neck platforms: PAL Talos, Booster T1,
-Fourier GR-3, Apptronik Apollo. All of them fall below this design on pairwise coverage,
-because their cameras share the same neck joints. However wide or steerable that view is,
-it is still one viewing direction. GR-3 has the widest field of view in the group and
-scores lower for exactly this reason.
+Colour encodes the orientation reachability index R, the fraction of 64 near-uniform SO(3)
+orientations that admit a collision-free IK solution at each 20 mm grid point.
+
+Under the same geometric evaluation, the visible-reachable fraction ranges from 16% for the
+fixed-head Unitree G1 to 48-76% for platforms with an actuated neck: PAL Talos, Booster T1,
+Fourier GR-3 and Apptronik Apollo. All remain below this design on η₂, because their
+cameras share the same neck joints and cannot aim independently at two separated regions.
+GR-3 has the widest camera field of view among these platforms but still provides only one
+viewing direction.
 
 ## Two-target reach-and-grasp benchmark
 
-Success rates barely move across the five configurations, all between 0.967 and 0.994. The
-cost does. Two actuated cameras finish 17% faster than the same robot with them welded,
-using 19% less mechanical energy.
+Actuated and fixed camera configurations (Act, Fix; K = 1, 2) were tested against the
+Unitree G1 in six simulated two-target reach-and-grasp tasks. The robot had to locate and
+grasp two objects placed to its left/right or front/back, either both on benches or one on
+a bench and the other held by a human. Benches were close (0.20 m, objects within reach) or
+far (0.8 m, requiring the robot to walk before reaching). A trial succeeded if both targets
+were grasped. Completion time decomposes into search, approach and manipulation.
 
-Most of that is search time. A welded camera has to rotate the torso, or walk toward the
-region until the cube appears. Actuated cameras look. That halves search time at two
-cameras and cuts it by 82% at one. Approach time drops too, since a far cube can be found
-before the robot starts walking, so it heads for the cube rather than the table.
+Success rates were similar across the five configurations, ranging from 0.967 to 0.994.
+Compared with Fix₂, Act₂ reduced mean completion time by 17% and energy by 19%. At K = 1,
+Act₁ reduced completion time by 24% and energy by 35% relative to Fix₁.
 
-The second camera is a separate question. One actuated camera covers almost the same
-single-target space as two. Two matter when both cubes have to be watched at once, so the
-planner can reach for both together.
+Camera actuation reduced search, approach and manipulation time alike. Act₂ reduced search
+time by 50% relative to Fix₂, and Act₁ by 82% relative to Fix₁. The reduction came mainly
+from locating targets through camera motion rather than walking until the targets became
+visible. Approach time also fell, because far targets could be located before walking,
+allowing the robot to walk directly toward the target rather than first toward the bench.
 
-We ran the dual-actuated build on hardware for all four tabletop scenarios. Each clip below
+The second camera contributed differently. Act₁ and Act₂ had similar single-target
+coverage; Act₂ had higher η₂ and could keep both targets in view for simultaneous reaching.
+Camera configurations with higher visible-reachable and pairwise coverage reduced
+completion time and energy while maintaining similar success rates.
+
+**Real-world deployment.** Act₂ was deployed on all four tabletop scenarios. Each clip below
 is four separate trials playing together.
 
-![Left and right tables, close, four hardware trials](media/hardware_close_left_right.webp)
+![Left/right close, four hardware trials](media/hardware_close_left_right.webp)
 
-Tables to the left and right, both within reach. One camera goes to each cube and both arms
-go out together, with the feet staying where they are.
+Left/right close. The two cameras observe the separated targets and both arms reach without
+torso reorientation.
 
-![Front and back tables, close, four hardware trials](media/hardware_close_front_back.webp)
+![Front/back close, four hardware trials](media/hardware_close_front_back.webp)
 
-The same, with one table in front and the other behind. The rear cube is the case a
-forward-facing camera cannot cover at all.
+Front/back close. One bench sits behind the robot, which is the region a single
+forward-facing view cannot cover.
 
-![Far tables, walking, four hardware trials](media/hardware_far_walk.webp)
+![Left/right far, walking, four hardware trials](media/hardware_far_walk.webp)
 
-Far apart, so neither cube is reachable from a standstill. The robot locates both first,
-then walks to each in turn. Finding them before setting off is what lets it walk at a cube
-rather than at a table.
+Left/right far. Neither target is within reach from the start stance, so the robot observes
+both, walks closer, then grasps.
 
 Table IV has the full numbers, from 900 trials that reproduce from this release.
 
