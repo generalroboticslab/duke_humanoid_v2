@@ -90,7 +90,13 @@ recorded video:
 ```bash
 git clone https://github.com/generalroboticslab/duke_humanoid_v2_simulation.git
 cd duke_humanoid_v2_simulation
-pip install -r requirements.txt          # plus nvidia-curobo, see its README
+
+# A Python 3.12 environment, from nothing. Skip if you already have one.
+"${SHELL}" <(curl -L micro.mamba.pm/install.sh)
+micromamba create -n vrw python=3.12 -y && micromamba activate vrw
+micromamba install -c conda-forge uv -y
+
+uv pip install -r requirements.txt        # plus nvidia-curobo, see its README
 ```
 
 Regenerate the workspace figures. These read the shipped caches and finish in seconds,
