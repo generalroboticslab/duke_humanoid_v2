@@ -10,13 +10,18 @@ places at once without reorienting its torso.
 
 <!-- Add [Paper] / [Project page] / [Video] to the row above once the arXiv preprint is posted. -->
 
+![Duke Humanoid V2 tracking two moving targets](media/hardware_tracking.webp)
+
+On hardware. Two people stand on opposite sides, each holding a tagged cube and moving it.
+One camera goes to each, and both arms track their own target.
+
 ![Duke Humanoid V2](media/teaser.png)
 
-![Two targets left and right, four camera setups](media/two_target_left_right.webp)
+In simulation, the same task with four camera setups: two tables, one green cube on each.
+Only dual actuated keeps both cubes in view and reaches both. The shaded cones show what
+each camera sees.
 
-Two tables, one green cube on each, and the same robot with four camera setups. Only dual
-actuated keeps both cubes in view and reaches both. The shaded cones show what each camera
-sees.
+![Two targets left and right, four camera setups](media/two_target_left_right.webp)
 
 The same four setups, with the tables in front and behind instead of left and right:
 
