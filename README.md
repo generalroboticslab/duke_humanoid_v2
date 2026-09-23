@@ -5,11 +5,11 @@
 **A 31-DoF humanoid whose two RGB-D cameras aim independently, designed around the
 visible-reachable workspace.**
 
-**Paper** (preprint coming) ·
+**[Paper](https://arxiv.org/abs/2609.08905)** ·
 **[Simulation &amp; training](https://github.com/generalroboticslab/duke_humanoid_v2_simulation)** ·
 **[Onboard control stack](https://github.com/generalroboticslab/duke_humanoid_v2_deploy)** ·
 **[Quick start](#quick-start)** ·
-**[Hardware](#hardware)**
+**[Hardware](https://generalroboticslab.github.io/Duke_Humanoid_V2_OpenSource/)**
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/python-3.12-blue.svg)
@@ -347,15 +347,15 @@ lists each failure alongside the "simplification" that would bring it back.
 
 ## Citation
 
-The preprint is not posted yet. When it is, this block and the link row at the top will carry the
-reference.
-
 ```bibtex
-@misc{duke_humanoid_v2,
-  title  = {Visible-Reachable Workspace for Perception-Aware Humanoid Design},
-  author = {Boxi Xia and Zijiang Yang and Ryan Shin and Bokuan Li and Eric Lu and Jacob Lee and Jiaxun Liu and Boyuan Chen},
-  year   = {2026},
-  url    = {https://github.com/generalroboticslab/duke_humanoid_v2}
+@misc{xia2026visiblereachableworkspaceperception,
+      title={Visible-Reachable Workspace for Perception-Aware Humanoid Design}, 
+      author={Boxi Xia and Zijiang Yang and Ryan Shin and Bokuan Li and Eric Wun-Hao Lu and Jacob Lee and Jiaxun Liu and Boyuan Chen},
+      year={2026},
+      eprint={2609.08905},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2609.08905}, 
 }
 ```
 

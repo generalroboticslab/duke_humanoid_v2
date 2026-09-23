@@ -13,7 +13,7 @@ authors:
   - family-names: Li
     given-names: Bokuan
   - family-names: Lu
-    given-names: Eric
+    given-names: Eric Wun-Hao
   - family-names: Lee
     given-names: Jacob
   - family-names: Liu
@@ -29,3 +29,7 @@ keywords:
 license: Apache-2.0
 url: https://github.com/generalroboticslab/duke_humanoid_v2
 repository-code: https://github.com/generalroboticslab/duke_humanoid_v2
+identifiers:
+  - type: url
+    value: https://arxiv.org/abs/2609.08905
+    description: arXiv preprint (arXiv:2609.08905)
